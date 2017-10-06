@@ -1,10 +1,13 @@
 import logging
 import datetime
+import time
 
 from google.appengine.api import app_identity
 
 from handlers.base import BaseHandler
 from models.user import User
+from utils.check_localhost import is_local
+from utils.decorators import login_required
 from utils.email_sender import send_email
 
 
@@ -17,14 +20,57 @@ class RegistrationHandler(BaseHandler):
         password = self.request.get("registration_password")
         repeat = self.request.get("registration_password_repeat")
 
-        if email == repeat:
+        if password == repeat:
             user, message = User.create(email=email, password=password)
             return self.write(message)
+        else:
+            return self.write("Your password entries do not match.")
+
+
+class VerifyEmailHandler(BaseHandler):
+    def get(self, token):
+        params = {}
+
+        if User.verify_email_address(token=token):
+            params["message"] = "Email verified! Now you can login."
+        else:
+            params["message"] = "Email could not be verified..."
+
+        return self.render_template("verify_email.html", params=params)
 
 
 class LoginHandler(BaseHandler):
     def get(self):
         return self.render_template("login.html")
+
+    def post(self):
+        destination = self.request.get("destination")
+        email = self.request.get("login_email")
+        password = self.request.get("login_password")
+
+        if not email or not password:
+            return self.write("Email or password missing.")
+
+        if User.verify_login(email=email, password=password, request=self.request, response=self.response):
+            if not destination:
+                destination = "/"  # main page
+
+            if is_local():
+                time.sleep(2)  # this is needed because datastore lags on localhost
+
+            return self.redirect(destination)  # take user to the destination that s/he wanted to get to
+        else:
+            return self.write("Login failed.")
+
+
+class LogoutHandler(BaseHandler):
+    @login_required
+    def post(self):
+        session_token = self.request.cookies.get("ninja_cookie")
+
+        User.remove_session_token(user=self.user, cookie_hash=User.hash_token(session_token), response=self.response)
+
+        return self.redirect_to("main")
 
 
 class ResetEnterEmailHandler(BaseHandler):

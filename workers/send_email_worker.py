@@ -20,6 +20,7 @@ class SendEmailWorker(BaseHandler):
             send_via_provider(provider="google", sender_email=sender_email, sender_name=sender_name,
                               receiver_email=receiver_email, email_subject=email_subject, content=content)
         else:
+            # if you're on localhost, the email will show up in your Terminal, but will not be really sent
             logging.info("LOCALHOST: sending email, but not really :)")
             logging.info("Sender: %s" % sender_email)
             logging.info("Receiver: %s" % receiver_email)

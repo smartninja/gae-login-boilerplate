@@ -1,6 +1,7 @@
 # Project
 utils/secrets.py
 libs
+datastore
 
 # PyCharm
 .idea

@@ -2,4 +2,12 @@
 
 {% block content %}
 <h3>Login form</h3>
+
+<form method="post">
+    Email: <input type="email" name="login_email">
+    <br>
+    Password: <input type="password" name="login_password">
+    <br>
+    <button type="submit">Login</button>
+</form>
 {% endblock content %}

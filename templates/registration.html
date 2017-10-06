@@ -2,4 +2,14 @@
 
 {% block content %}
 <h3>Registration form</h3>
+
+<form method="post">
+    Email: <input type="email" name="registration_email">
+    <br>
+    Password: <input type="password" name="registration_password">
+    <br>
+    Repeat password: <input type="password" name="registration_password_repeat">
+    <br>
+    <button type="submit">Register</button>
+</form>
 {% endblock content %}

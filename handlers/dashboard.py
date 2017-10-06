@@ -5,4 +5,5 @@ from utils.decorators import login_required
 class DashboardHandler(BaseHandler):
     @login_required
     def get(self):
-        return self.render_template("dashboard.html")
+        params = {"user": self.user}
+        return self.render_template("dashboard.html", params=params)

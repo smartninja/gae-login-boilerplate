@@ -4,4 +4,12 @@
 <h3>User dashboard</h3>
 
 <p>This dashboard is protected and is visible only to logged in users.</p>
+
+{% if user %}
+<p>Hello <strong>{{user.email}}</strong>! You are logged in :)</p>
+{% endif %}
+
+<form action="/logout" method="post">
+    <button type="submit">Logout</button>
+</form>
 {% endblock content %}

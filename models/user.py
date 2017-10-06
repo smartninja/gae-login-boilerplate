@@ -6,6 +6,7 @@ import logging
 
 import datetime
 from google.appengine.ext import ndb
+from google.appengine.api import app_identity
 
 from utils.email_sender import send_email
 from utils.secrets import get_pepper
@@ -38,7 +39,7 @@ class User(ndb.Model):
 
     @classmethod
     def create(cls, email, password):
-        user = cls.query(User.email == email.lower()).get()
+        user = cls.query(cls.email == email.lower()).get()
 
         if not user and email.count("@"):
             user = cls(email=email)
@@ -48,12 +49,13 @@ class User(ndb.Model):
 
             token, expired = cls.set_token_hash(user=user, verify_email=True)  # get a "verify email" token
 
-            params = {"token": token}
+            domain = app_identity.get_default_version_hostname()
+            params = {"verify_url": "https://{0}/verify-email/{1}".format(domain, token)}
             send_email(receiver_email=email, email_subject="Verify your email address",
-                       template="email/verify_email.html", template_params=params)
+                       template="verify_email.html", template_params=params)
             message = "Registration successful. Now please check your email and verify your email address."
         else:
-            message = "User with this email already exists."
+            message = "Registration failed. User with this email already exists."
 
         return user, message
 
@@ -62,15 +64,15 @@ class User(ndb.Model):
         if not request or not response:
             return False
 
-        session_token = request.cookies.get("ninja_token")
+        session_token = request.cookies.get("ninja_cookie")
 
         if session_token:
-            user = cls.query(cls.session_token_hashes.token_hash == cls._hash_token(session_token)).get()
+            user = cls.query(cls.session_token_hashes.token_hash == cls.hash_token(session_token)).get()
 
             if user:
                 return user
             else:
-                response.delete_cookie(key="ninja_token")
+                response.delete_cookie(key="ninja_cookie")
 
         return False
 
@@ -112,15 +114,26 @@ class User(ndb.Model):
             user.verified_email = True
             user.verify_email_token_expired = datetime.datetime.now()
             user.put()
+
             return True
         else:
             return False
 
     @classmethod
-    def compare_password_hash(cls, user, password):
+    def verify_login(cls, email, password, request, response):
+        user = cls.query(cls.email == email.lower()).get()
+
+        if not user or not password:
+            return False
+
+        if not user.password_hash:
+            return False
+
         hash_string, salt = user.password_hash.split(":")
-        if user.password_hash and user.password_hash == cls._generate_password_hash(user=user, password=password,
-                                                                                    salt=salt):
+        if user.password_hash == cls._generate_password_hash(user=user, password=password, salt=salt):
+            # set session token hash
+            session_token, expired = cls.set_token_hash(user=user, request=request)
+            response.set_cookie(key="ninja_cookie", value=session_token, expires=expired)
             return True
         else:
             return False
@@ -129,7 +142,7 @@ class User(ndb.Model):
     def set_token_hash(cls, user, reset=False, verify_email=False, request=None):
         # there are two types of tokens: reset password tokens and login session tokens
         token = cls._generate_token()
-        token_hash = cls._hash_token(token=token)
+        token_hash = cls.hash_token(token=token)
 
         if reset:
             # reset token
@@ -168,7 +181,7 @@ class User(ndb.Model):
         return uuid.uuid4().hex + uuid.uuid4().hex
 
     @staticmethod
-    def _hash_token(token):
+    def hash_token(token):
         return hashlib.sha512(token).hexdigest()
 
     @classmethod
@@ -178,17 +191,17 @@ class User(ndb.Model):
                 user.session_token_hashes.remove(token)
                 user.put()
                 if response:
-                    response.delete_cookie(key="ninja_token")
+                    response.delete_cookie(key="ninja_cookie")
 
     @classmethod
     def reset_password(cls, reset_token, password=None, repeat=None):
-        user = User.query(User.reset_token_hash == User.hash_token(token=reset_token)).get()
+        user = cls.query(cls.reset_token_hash == cls.hash_token(token=reset_token)).get()
 
         if user:
             if user.reset_token_expired > datetime.datetime.now():
                 if password and repeat:
                     if password == repeat:
-                        User.set_password_hash(user=user, password=password)
+                        cls.set_password_hash(user=user, password=password)
                         return user
 
         return False
