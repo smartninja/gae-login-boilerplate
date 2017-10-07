@@ -36,3 +36,5 @@ def send_email(receiver_email, email_subject, template, sender_email=None, sende
         url="/tasks/send-email",
         params=task_params
     )
+
+    return True

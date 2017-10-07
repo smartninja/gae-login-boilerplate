@@ -88,7 +88,7 @@ class ResetEnterEmailHandler(BaseHandler):
 
             params = {"reset_url": "https://{0}/reset-password/new-password?token={1}".format(domain, token)}
             subject = "Reset password"
-            template = "reset_password"
+            template = "reset_password.html"
             email_sent = send_email(template=template, template_params=params, receiver_email=email, email_subject=subject)
 
             if email_sent:
@@ -115,7 +115,7 @@ class ResetEnterPasswordHandler(BaseHandler):
                 params = {"this_user": user}
                 return self.render_template("reset/reset_enter_password.html", params=params)
 
-        return self.redirect_to("oops")
+        return self.write("Error: Something went wrong.")
 
     def post(self):
         token = self.request.get("token")
@@ -135,4 +135,4 @@ class ResetEnterPasswordHandler(BaseHandler):
                 User.set_password_hash(user=user, password=password)  # set new password
                 return self.render_template("reset/reset_password_success.html")
 
-        return self.redirect_to("oops")
+        return self.write("Error: Something went wrong.")

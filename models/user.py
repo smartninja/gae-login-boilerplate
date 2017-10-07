@@ -38,6 +38,10 @@ class User(ndb.Model):
         return self.key.id()
 
     @classmethod
+    def get_by_email(cls, email):
+        return cls.query(cls.email == email.lower()).get()
+
+    @classmethod
     def create(cls, email, password):
         user = cls.query(cls.email == email.lower()).get()
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>Login form</h3>
+<h2>Login form</h2>
 
 <form method="post">
     Email: <input type="email" name="login_email">
@@ -10,4 +10,8 @@
     <br>
     <button type="submit">Login</button>
 </form>
+
+<br>
+
+<a href="/reset-password/enter-email">Forgot password?</a>
 {% endblock content %}
