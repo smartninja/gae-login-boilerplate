@@ -1,18 +1,10 @@
 # About
 
-GAE python boilerplate with integrated registration&login system to jumpstart your projects.
+GAE python boilerplate with integrated registration & login system to jumpstart your projects.
 
 ## utils/secrets.py
 
-Create a secrets.py file in the utils folder.
-
-Add the following functions that encapsulate secret variables, like this:
-
-    def get_sendgrid_api_key():
-        return "sendgrid-key-here"
-    
-    def get_pepper():
-        return "pepper-string-here"
+Copy `secrets_template.py` file in the `utils` folder and rename it to `secrets.py`.
 
 ## Dependencies
 

@@ -1,12 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h3>User dashboard</h3>
+<h2>User dashboard</h2>
 
 <p>This dashboard is protected and is visible only to logged in users.</p>
 
 {% if user %}
 <p>Hello <strong>{{user.email}}</strong>! You are logged in :)</p>
+
+<table border="1">
+    <tr>
+        <th>Token</th>
+        <th>Expired</th>
+        <th>IP</th>
+        <th>Operating system</th>
+        <th>Created</th>
+    </tr>
+
+    <h3>Session tokens</h3>
+    {% for token in user.session_token_hashes %}
+    <tr>
+        <td>{{token.token_hash[:50]}}...</td>
+        <td>{{token.expired}}</td>
+        <td>{{token.ip}}</td>
+        <td>{{token.os}}</td>
+        <td>{{token.created}}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endif %}
 
 <form action="/logout" method="post">
