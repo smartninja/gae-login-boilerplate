@@ -30,5 +30,5 @@ Logging in might not work sometimes on localhost due to the datastore lag. The a
 
 - `gcloud init` (always use a new configuration and create a new project - unless you created one on Cloud Console before)
 - `gcloud app create --region=europe-west` (this creates a new GAE app within the Google Cloud project)
-- `gcloud app deploy app.yaml cron.yaml index.yaml queue.yaml --version main` (this uploads all the necessary yaml files and names the version "main")
+- `gcloud app deploy app.yaml cron.yaml index.yaml queue.yaml --version main` (this uploads all the necessary yaml files and names the version "main". If there are some yaml files missing, remove them from this command.)
 - `gcloud app browse` (this opens up the app URL in your browser)
