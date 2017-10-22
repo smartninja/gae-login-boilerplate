@@ -2,16 +2,38 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>SmartNinja basic Jinja template</title>
+    <title>Hello SmartNinja</title>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-    <h1>Hello, SmartNinja!</h1>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Hello SmartNinja</a>
 
-    <a href="/">Main</a> | <a href="/registration">Registration</a> | <a href="/login">Login</a> | <a href="/dashboard">User dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    {% block content %}
-    {% endblock content %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="ml-auto">
+                <a href="/registration"><button class="btn btn-outline-primary mr-2">Register</button></a>
+                <a href="/login"><button class="btn btn-outline-success mr-2">Login</button></a>
+                <a href="/dashboard"><button class="btn btn-outline-info mr-2">Dashboard</button></a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-4">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    {% block scripts %}
+    {% endblock scripts %}
 </body>
 </html>
