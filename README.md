@@ -14,7 +14,7 @@ or `pip install -t libs -r requirements.txt --upgrade`
 
 ## Cloud SDK and running the project
 
-Make sure you have Cloud SDK installed. You can run the project by typing `sh run.sh` in the terminal.
+Make sure you have Cloud SDK installed. You can run the project by typing `sh run.sh` in the terminal (Mac & Linux). On Windows run just `run.sh` command in Git Bash or similar program that can read shell scripts.
 
 ## Emailing
 
